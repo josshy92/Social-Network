@@ -1,3 +1,5 @@
+//make routes for all the thoughts
+
 const router = require("express").Router();
 const {
     getThoughts,

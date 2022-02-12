@@ -17,6 +17,7 @@ const userSchema = new Schema(
         },
         thoughts: [
             {
+                //if this doesn't work, reference act 25, videoController and Videojs model.
                 type: Schema.Types.ObjectId,
                 ref: 'Thought'
             }
