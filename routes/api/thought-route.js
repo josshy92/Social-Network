@@ -13,8 +13,10 @@ const {
 
 router.route('/')
     .get(getThoughts)
-    .get(getSingleThought)
     .post(createThought)
+
+router.route('/:thoughtId')    
+    .get(getSingleThought)
     .put(updateThought)
     .delete(deleteThought)
 

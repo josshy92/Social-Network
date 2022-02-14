@@ -1,3 +1,4 @@
+const res = require('express/lib/response');
 const { Thought, User } = require('../models')
 
 module.exports = {
@@ -15,17 +16,29 @@ module.exports = {
             )
             .catch((err) => res.status(500).json(err))
     },
-    //create a thought
-    createThought(req, res) {
-        Thought.create(req.body)
-            .then((thought) => {
-                return User.findOneAndUpdate(
-                    { _id: req.body.userId },
-                    { $addToSet: { thoughts: thought._id } },
-                    { new: true }
-                );
+    // create a thought
+    createThought({ body }, res) {
+        Thought.create(body)
+        .then(thoughtData => {
+            User.findOneAndUpdate(
+                { _id: body.userId },
+                { $push: { thoughts: thoughtData._id } },
+                { new: true }
+            )
+            .then(userData => {
+                if (!userData) {
+                    res.status(404).json({ message: 'Thought created but no user found with this id' });
+                    return;
+                }
+                res.json(userData);
             })
+            .catch(err => res.json(err));
+        })
+        .catch(err => res.status(400).json(err));
     },
+
+
+
     //update a thought
     updateThought(req, res) {
         Thought.findOneAndUpdate(
@@ -38,25 +51,24 @@ module.exports = {
                     ? res.status(404).json({ message: "No thought found with that ID!" })
                     : res.json(thought)
             )
+            .catch((err) => {
+                console.log(err);
+                res.status(500).json(err);
+              });
     },
     //delete a thought
     deleteThought(req, res) {
         Thought.findOneAndRemove({ _id: req.params.thoughtId })
-            .then((thought) =>
-                !thought
-                    ? res.status(404).json({ message: "No thought found with that ID " })
-                    : User.findOneAndUpdate(
-                        { thoughts: req.params.thoughtId },
-                        { $pull: { thoughts: req.params.thoughtId } },
-                        { new: true }
-                    )
+        .then((thought) =>
+        !thought
+            ? res.status(404).json({ message: "No thought found with that ID!" })
+            : res.json({message: "Thought successfully deleted!"})
+
             )
-            .then((user) =>
-                !user
-                    ? res
-                        .status(404)
-                        .json({ message: "Thought was created but no user with this ID!" })
-                    : res.json({ message: "Thought was successfully deleted!" })
+
+            User.findOneAndUpdate(
+                {username: req.params.thoughtId.username},
+                {$pull: {thoughts: req.params.thoughtId}}
             )
             .catch((err) => res.status(500).json(err))
     },
