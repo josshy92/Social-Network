@@ -7,6 +7,7 @@ https://watch.screencastify.com/v/N488YYVHrpByVGwSk7tI
 
 
 # Snippet
+![image](https://user-images.githubusercontent.com/88861538/154174033-ff64c534-0daa-4820-9405-2bf4ac7c9faa.png)
 
 
 # Mentions
